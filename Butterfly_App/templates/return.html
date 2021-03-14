@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Butterfly Book</title>
+{% endblock %}
+
+{% block body %}
+<div class="content">
+    <div class="info" style="text-align=center">
+        <h1 style="text-align=center">Butterfly Book</h1>
+    </div>
+
+    <div class="classification">
+        <p>Species: {{butterfly.name}}</p>
+        <input type="submit" value="Home">
+    </div>
+
+</div>
+{% endblock %}

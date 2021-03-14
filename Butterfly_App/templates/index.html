@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Butterfly Book</title>
+{% endblock %}
+
+{% block body %}
+<div class="content">
+    <div class="info" style="text-align=center">
+        <h1 style="text-align=center">Butterfly Book</h1>
+        <p>Upload a picture of a butterfly and see if we can figure out the species!</p>
+        <p>Accepted image types are jpg, jpeg, and png.</p>
+    </div>
+
+    {% if butterflies|length < 1 %}
+    <h3 style="text-align=center"> Please add a new image. </h3>
+    {% endif %}
+
+    <div class="form">
+        <form action="/" method="POST">
+            <input type="submit" value="Find Image"> <!-- check this!!! -->
+            <input type="text" name="content" id="content">
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+
+</div>
+{% endblock %}
