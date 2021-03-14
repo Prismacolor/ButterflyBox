@@ -18,10 +18,10 @@ label_list = []
 
 
 def label_data(root_):
-    # attache labels to our list of images
+    # attach labels to our list of images
     class_names = []
+    print('Labelling data...')
     for root, dirs, files in os.walk(root_):
-        print('Labelling data...')
         for file in files:
             if file.endswith('.jpg'):
                 img_path = os.path.join(root, file)
@@ -35,6 +35,7 @@ def label_data(root_):
                 img_list.append(img_path)
                 label_list.append(label)
 
+    print('Labelling complete.')
     return class_names, img_list, label_list
 
 
@@ -55,6 +56,7 @@ def data_processing(images):
 def convert_data(data):
     new_data = np.array(data, dtype=float)
     data_tf = tf.convert_to_tensor(new_data, np.float32)
+
     return data_tf
 
 
@@ -62,19 +64,20 @@ def build_model(output):
     # base is a series of convolutional and pooling layers
     # added dropout layers to deactivate certain neurons, helps prevent overfitting
     # final layers are a regular dense network used to flatten and sort data based on probability distributions
+    # initially tried relu but relu + softmax may create weird results.
     try:
         model = Sequential()
-        model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(128, 128, 3)))
+        model.add(Conv2D(32, (3, 3), activation='tanh', input_shape=(128, 128, 3)))
+        model.add(MaxPooling2D((2, 2)))
+        model.add(Dropout(.35))
+        model.add(Conv2D(64, (3, 3), activation='tanh'))
         model.add(MaxPooling2D((2, 2)))
         model.add(Dropout(.25))
-        model.add(Conv2D(64, (3, 3), activation='relu'))
-        model.add(MaxPooling2D((2, 2)))
-        model.add(Dropout(.25))
-        model.add(Conv2D(64, (3, 3), activation='relu'))
+        model.add(Conv2D(64, (3, 3), activation='tanh'))
         model.add(MaxPooling2D((2, 2)))
 
         model.add(Flatten())
-        model.add(Dense(64, activation='relu'))
+        model.add(Dense(64, activation='tanh'))
         model.add(Dense(50, activation='softmax'))
 
         return model
@@ -97,7 +100,14 @@ def training():
     encoder = preprocessing.LabelEncoder()
     labels_arr = np.array(labels).reshape(-1, 1)
     labels_arr = encoder.fit_transform(labels_arr)
+    decoded_labels_arr = encoder.inverse_transform(labels_arr)
     output_count = len(classes)
+
+    # create a dictionary with encoded to decoded labels to use for predictions later:
+    encodings = {}
+    for label1, label2 in zip(labels_arr, decoded_labels_arr):
+        if label1 not in encodings.keys():
+            encodings[label1] = label2
 
     # set the features/inputs vs the labels, split data into training, validation sets and final testing set
     images_TV_data = {'images': image_arrays[:12000], 'labels': labels_arr[:12000]}
@@ -112,38 +122,38 @@ def training():
     X_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.20, shuffle=True, random_state=42)
 
     # processing/converting the data sets to the correct formats
-    y_train = to_categorical(y, num_classes=50)
-    y_test = to_categorical(y, num_classes=50)
-    final_test_y = to_categorical(y, num_classes=50)
-
     X_train, y_train = convert_data(X_train), convert_data(y_train)
     x_test, y_test = convert_data(x_test), convert_data(y_test)
     final_test_x, final_test_y = convert_data(final_test_x), convert_data(final_test_y)
+
+    y_train = to_categorical(y_train, num_classes=50)
+    y_test = to_categorical(y_test, num_classes=50)
+    final_test_y = to_categorical(final_test_y, num_classes=50)
 
     # now we are going to build the convolutional neural network
     cnn_model = build_model(output_count)
 
     if cnn_model != 0:
-        sess=tf.compat.v1.InteractiveSession()
+        sess = tf.compat.v1.InteractiveSession()
         print(cnn_model.summary())
-        cnn_model.compile(optimizer='adam',
+        optimizer = keras.optimizers.SGD(lr=0.01)
+        cnn_model.compile(optimizer=optimizer,
                           loss='categorical_crossentropy',
                           metrics=['accuracy'])
-        cnn_model.fit(X_train, y_train, epochs=10, verbose=2, validation_split=0.2, validation_data=(x_test, y_test))
+        cnn_model.fit(X_train, y_train, epochs=100, batch_size=200, verbose=2, validation_data=(x_test, y_test))
 
         # then we'll test our model on our final data set, once it's been tweaked
+        image_preds = cnn_model.predict(final_test_x)
+        final_preds = np.argmax(image_preds, axis=1)
+        for pred in final_preds:
+            print(encodings[pred])
+
         sess.close()
-        return cnn_model
+        return cnn_model, encodings
     else:
         print("Error creating model")
         return 0
 
-
-# ********* build model script *********
-# train model on training set
-# evaluate the model on validate set, and tweak
-# finally run through test data to get final results
-# return the model
 
 # ********* project wrap up *************
 # create requirements document
@@ -151,6 +161,7 @@ def training():
 # create readme
 # package model and deploy either via flask or via docker
 
-
 if __name__ == '__main__':
-    trained_model = training()
+    trained_model, model_encodings = training()
+    if trained_model is not None:
+        trained_model.save('../Models/')
