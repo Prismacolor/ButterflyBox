@@ -1,0 +1,9 @@
+{32: 'pipevine swallow', 8: 'clodius parnassian', 13: 'eastern coma', 14: 'gold banded', 10: 'copper tail',
+47: 'wood satyr', 38: 'silver spot skipper', 20: 'malachite', 6: 'cabbage white', 18: 'julia', 41: 'sootywing',
+12: 'crimson patch', 30: 'peacock', 4: 'beckers white', 1: 'american snoot', 19: 'large marble', 31: 'pine white',
+43: 'straited queen', 26: 'orange tip', 21: 'mangrove skipper', 42: 'southern dogface', 33: 'purple hairstreak',
+39: 'sixspot burnet', 15: 'great eggfly', 2: 'an 88', 44: 'two barred flasher', 5: 'black hairstreak',
+16: 'grey hairstreak', 36: 'red spotted purple', 37: 'scarce swallow', 45: 'ulyses', 3: 'banded peacock',
+28: 'painted lady', 35: 'red admiral', 11: 'crecent', 27: 'orchard swallow', 17: 'indra swallow', 7: 'chestnut',
+48: 'yellow swallow tail', 46: 'viceroy', 49: 'zebra long wing', 25: 'orange oakleaf', 23: 'monarch',
+34: 'question mark', 0: 'adonis', 29: 'paper kite', 24: 'morning cloak', 40: 'skipper', 9: 'clouded sulphur', 22: 'metalmark'}
