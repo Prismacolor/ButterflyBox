@@ -1,6 +1,6 @@
 import tensorflow as tf
 from tensorflow import keras
-from keras.models import Sequential
+from keras.models import Sequential, save_model
 from keras.layers import Conv2D, MaxPooling2D, Dropout, Dense, Flatten
 from tensorflow.keras.utils import to_categorical
 import logging
@@ -164,4 +164,4 @@ def training():
 if __name__ == '__main__':
     trained_model, model_encodings = training()
     if trained_model is not None:
-        trained_model.save('../Models/')
+        save_model(trained_model, '../Models/model_032421', save_format='h5')
