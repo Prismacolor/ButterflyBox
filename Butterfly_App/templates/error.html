@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Butterfly Book</title>
+{% endblock %}
+
+{% block body %}
+<div class="content">
+    <div class="info" style="text-align=center">
+        <h1 style="text-align=center">Butterfly Book</h1>
+    </div>
+
+    {% if error_message|length < 1 %}
+    <div class="message">
+        <p>Sorry, an error has occurred. Please click home to return to the previous screen.</p>
+        <input type="submit" value="Home">
+    </div>
+    {% else %}
+    <div class="message">
+        <p>{{error_message}}</p>
+        <div class="form">
+            <form action="/" method="POST">
+                <input type="submit" value="Home">
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
