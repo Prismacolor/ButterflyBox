@@ -12,5 +12,4 @@ COPY . /butterfly_app
 COPY app.py app.py
 
 EXPOSE 8080
-RUN apt-get install hdf5-tools
 CMD ["python", "app.py"]
