@@ -1,12 +1,16 @@
 FROM python
 
-WORKDIR /Butterfly_App
+WORKDIR /butterfly_app
 
-COPY requirements.txt /Butterfly_App/requirements.txt
-RUN pip install -r requirements.txt
+COPY requirements.txt /butterfly_app/requirements.txt
 
-COPY . /Butterfly_App
+RUN pip3 install --upgrade pip
+RUN pip3 install --upgrade tensorflow
+RUN pip3 install -r requirements.txt
+
+COPY . /butterfly_app
 COPY app.py app.py
 
 EXPOSE 8080
+RUN apt-get install hdf5-tools
 CMD ["python", "app.py"]
